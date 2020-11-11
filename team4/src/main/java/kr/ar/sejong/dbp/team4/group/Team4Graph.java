@@ -2,18 +2,46 @@
 package kr.ar.sejong.dbp.team4.group;
 
 import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashSet;
 
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Graph;
 import kr.ar.sejong.dbp.team4.Vertex;
 
+/* 안재현 코드
+// CREATE TABLE VERTEX(ID INTEGER PRIMARY KEY);
+// CREATE TABLE EDGE(Start_id INTEGER NOT NULL,End_id INTEGER NOT NULL , Label VARCHAR(50) , FOREIGN KEY(Start_id) REFERENCES VERTEX(ID) , FOREIGN KEY(End_id) REFERENCES VERTEX(ID));
+*/
+
 public class Team4Graph implements Graph{
 	
-	/* 
-	 * 여기서 그래프 만드는건가?그런가?맞겠지?그렇지?
+	private Connection connection;
+	private Statement stmt;
+	private HashSet<Integer> vertex = new HashSet<>();
+	private  ResultSet rs;
+	private Vertex[] vt ;
+	Team4Graph() throws FileNotFoundException, SQLException{
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "1234");
+		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
+		stmt.executeUpdate("CREATE OR REPLACE DATABASE dbp");
+		stmt.executeUpdate("USE dbp");
+		rs = stmt.executeQuery("SELECT * FROM VERTEX");
+		while(rs.next()) {
+			int id = rs.getInt("ID");
+			vertex.add(id);
+		}
+	}
+	
+	/* 김경남 코드
 	 * CREATE TABLE Vertex(id integer);
 	 * CREATE TABLE Edge(startID integer, endID integer); // 여기서 vertex 테이블 참조하면 되지 않을까..
-	 */
+
 	
 	public class Vertex {
 		private String id;
@@ -40,11 +68,31 @@ public class Team4Graph implements Graph{
 	// 그래프 클래스 메소드 구현
 	private Vertex vertices;
 	private Edge edges;
+	*/
 	
+	/* 안재현 코드*/
+	private Connection connection;
+	private Statement stmt;
+	private HashSet<Integer> vertex = new HashSet<>();
+	private  ResultSet rs;
+	private Vertex[] vt ;
+	Team4Graph() throws FileNotFoundException, SQLException{
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "1234");
+		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
+		stmt.executeUpdate("CREATE OR REPLACE DATABASE dbp");
+		stmt.executeUpdate("USE dbp");
+		rs = stmt.executeQuery("SELECT * FROM VERTEX");
+		while(rs.next()) {
+			int id = rs.getInt("ID");
+			vertex.add(id);
+		}
+	}
+
 	
 	// 밑에 오버라이딩 함수들 빨간줄 뜨는데 이유를 모르겠다 완전간단한 이유같은데 모르겠다 이거 지금 빨간줄뜨는게 정상인가??
 	@Override
-	public Vertex addVertex(String id) {
+	public Vertex addVertex(String id) throws SQLException{
+		/* 김경남 코드*/
 		// INSERT INTO Vertex VALUES (id);
 		
 		Vertex v = new Vertex(id);
@@ -52,10 +100,25 @@ public class Team4Graph implements Graph{
 		vertices = v;
 		
 		return v;
+		
+		
+		/* 안재현 코드 */
+		if(!vertex.equals(Integer.parseInt(id))) { // id 가 없다면 
+			Integer ID = Integer.parseInt(id);
+			vertex.add(ID);
+			stmt.executeUpdate("INSERT INTO VERTEX VALUES("+id+")");
+			return null; // 식
+		}
+		else
+		{
+			return null;
+		}
+
 	}
 
 	@Override
 	public Vertex getVertex(String id) {
+		/* 김경남 코드*/
 		// SELECT * FROM Vertex WHERE Vertex.id = id;
 		
 		Vertex v = vertices;
@@ -63,6 +126,13 @@ public class Team4Graph implements Graph{
 			v = v.next;
 		
 		return v;
+		
+		
+		/* 안재현 코드 */
+		Integer ID = Integer.parseInt(id);
+		if(vertex.equals(ID)) {
+		}
+		return null;
 	}
 
 	@Override
