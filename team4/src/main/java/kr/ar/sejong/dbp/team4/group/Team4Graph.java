@@ -1,5 +1,5 @@
-// 마지막 수정일: 11월 7일
 package kr.ar.sejong.dbp.team4.group;
+
 
 import java.util.Iterator;
 import java.io.FileNotFoundException;

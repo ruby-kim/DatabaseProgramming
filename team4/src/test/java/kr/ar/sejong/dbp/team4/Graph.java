@@ -1,4 +1,5 @@
-package kr.ac.sejong.da.project;
+package kr.ar.sejong.dbp.team4;
+
 
 public interface Graph {
 

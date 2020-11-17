@@ -1,4 +1,4 @@
-package kr.ac.sejong.da.project;
+package kr.ar.sejong.dbp.team4;
 
 /**
  * Direction is used to denote the direction of an edge or location of a vertex on an edge.
