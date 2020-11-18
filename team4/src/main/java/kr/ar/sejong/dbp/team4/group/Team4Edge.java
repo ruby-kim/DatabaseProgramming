@@ -8,6 +8,18 @@ import kr.ar.sejong.dbp.team4.Vertex;
 
 public class Team4Edge implements Edge{
 
+    private final String label;
+    private final Vertex inVertex;
+    private final Vertex outVertex;
+    private Team4Graph graph;
+    
+	public Team4Edge(final Vertex outVertex, final Vertex inVertex, final String label, final Team4Graph team4Graph) {
+	        this.label = label;
+	        this.outVertex = outVertex;
+	        this.inVertex = inVertex;
+
+	}
+
 	@Override
 	public Object getProperty(String key) {
 		// TODO Auto-generated method stub
@@ -43,5 +55,8 @@ public class Team4Edge implements Edge{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	public String toString() {
+		return "["+ outVertex+"-" + label +"->"+ inVertex+"]";
+		
+	}
 }

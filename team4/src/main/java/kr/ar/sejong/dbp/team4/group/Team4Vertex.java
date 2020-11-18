@@ -22,14 +22,14 @@ public class Team4Vertex implements Vertex {
 	private ResultSet rs;
 	private Team4Graph graph;
 	
-    //예: string 형태의 고유 아이디, '|' 사용 금지
+   
     private int id;
 
     Team4Vertex(final int id,final Team4Graph graph) throws SQLException{
 		this.id = id;
 		this.graph = graph;
 		
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "0000");
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "ahffk232");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 
 	}
