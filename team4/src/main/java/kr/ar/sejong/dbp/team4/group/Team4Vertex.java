@@ -32,6 +32,7 @@ public class Team4Vertex implements Vertex {
 		
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "1234");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
+		stmt.executeUpdate("USE Team4Graph");
 		pstmt = connection.prepareStatement("INSERT INTO vertex VALUES (?,?);");
 	}
     
@@ -53,7 +54,7 @@ public class Team4Vertex implements Vertex {
     @Override
     public Object getProperty(String key) {
     	try{
-    		return stmt.executeQuery("SELECT JSON_VALUE(property, $."+key+") FROM Vertex WHERE id = "+this.id+";");
+    		return stmt.executeQuery("SELECT JSON_VALUE(properties, $."+key+") FROM Vertex WHERE id = "+this.id+";");
     	} catch(Exception e){
     		return null;
     	}
@@ -74,7 +75,7 @@ public class Team4Vertex implements Vertex {
     		//value가 String 이다.
         	if(value instanceof String) {
         		try {
-        		stmt.executeUpdate("UPDATE vertex SET property = '{\"" + key +"\":\""+ value + "\"}' WHERE ID ="+ this.id +";" );
+        		stmt.executeUpdate("UPDATE vertex SET properties = '{\"" + key +"\":\""+ value + "\"}' WHERE ID ="+ this.id +";" );
         		}
         		catch(Exception e){
         			return;
@@ -83,7 +84,7 @@ public class Team4Vertex implements Vertex {
         	// value가 숫자형.
         	else {
         		try {
-            		stmt.executeUpdate("UPDATE vertex SET property = '{\"" + key +"\":"+ value + "}' WHERE ID ="+ this.id +";" );
+            		stmt.executeUpdate("UPDATE vertex SET properties = '{\"" + key +"\":"+ value + "}' WHERE ID ="+ this.id +";" );
             		}
             		catch(Exception e){
             			return;
@@ -93,7 +94,7 @@ public class Team4Vertex implements Vertex {
     	// 해당 vertex에 기존에 저장된 property가 있다
     	else {
     		try {
-    			ResultSet set = stmt.executeQuery("SELECT property from vertex WHERE ID = "+this.id+";");	
+    			ResultSet set = stmt.executeQuery("SELECT properties from vertex WHERE ID = "+this.id+";");	
     			property = set.getString(1);
     			property = property.substring(1,property.length()-1);	
 			} catch (SQLException e1) {
@@ -102,7 +103,7 @@ public class Team4Vertex implements Vertex {
     		//value가 String 이다.
         	if(value instanceof String) {
         		try {
-        		stmt.executeUpdate("UPDATE vertex SET property = '{"+property+"\"" + key +"\":\""+ value + "\"}' WHERE ID ="+ this.id +";" );
+        		stmt.executeUpdate("UPDATE vertex SET properties = '{"+property+"\"" + key +"\":\""+ value + "\"}' WHERE ID ="+ this.id +";" );
         		}
         		catch(Exception e){
         			return;
@@ -111,7 +112,7 @@ public class Team4Vertex implements Vertex {
         	// value가 숫자형.
         	else {
         		try {
-            		stmt.executeUpdate("UPDATE vertex SET property = '{"+property+"\"" + key +"\":"+ value + "}' WHERE ID ="+ this.id +";" );
+            		stmt.executeUpdate("UPDATE vertex SET properties = '{"+property+"\"" + key +"\":"+ value + "}' WHERE ID ="+ this.id +";" );
             		}
             		catch(Exception e){
             			return;
