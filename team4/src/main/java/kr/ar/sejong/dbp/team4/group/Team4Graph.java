@@ -8,9 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
+import java.util.Iterator;
+import java.util.List;
 
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Graph;
@@ -18,8 +17,8 @@ import kr.ar.sejong.dbp.team4.Vertex;
 
 public class Team4Graph implements Graph{
 
-    protected Map<String, Team4Vertex> vertices = new HashMap<String, Team4Vertex>();
-    protected Map<String, Team4Edge> edges = new HashMap<String, Team4Edge>();
+    protected HashMap<String, Team4Vertex> vertices = new HashMap<String, Team4Vertex>();
+    protected HashMap<String, Team4Edge> edges = new HashMap<>();
     
     private Connection connection;
 	private Statement stmt;
@@ -87,50 +86,43 @@ public class Team4Graph implements Graph{
 
 	@Override
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
-		try {
-			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO edge VALUES(?,?,?,'{\"KEY1\":\"VALUE1\"}');");
-			//properties는 어떻게 넣어야 할까요?
-			//id값이 없는데 edges를 어케만들어야할까요..?
-			//vertex에는 in,out edge 표시 안해도 될까요?
-			//죄송합니다 ㅠ-ㅠ
-			pstmt.clearParameters();
-			pstmt.setObject(1, outVertex.getId()); // set properties
-			pstmt.setObject(2, inVertex.getId());
-			pstmt.setString(3, label);
-			pstmt.executeUpdate();
-			
-			Team4Edge edge = new Team4Edge(outVertex, inVertex, label, this);
-	        this.edges.put(outVertex.getId().toString(), edge);//일단 outvertex로..
-	        return edge;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		//PreparedStatement pstmt = connection.prepareStatement("INSERT INTO edge VALUES(?,?,?,'{\"KEY1\":\"VALUE1\"}');"); // 마지막은 jsonobject 
+		//properties는 어떻게 넣어야 할까요?
+		//id값이 없는데 edges를 어케만들어야할까요..?
+		//vertex에는 in,out edge 표시 안해도 될까요?
+		//죄송합니다 ㅠ-ㅠ
+		Team4Edge newEdge = new Team4Edge(outVertex , inVertex , label , this); // 새로 edge 만들기
+		String Edge_id = outVertex.getId()+ "|" + label + "|" +inVertex.getId();
+		edges.put(Edge_id, newEdge);
+		return newEdge;
 	}
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		Team4Edge tmp = new Team4Edge(outVertex, inVertex, label, this);
-		boolean i = false;
-		for(Edge item : edges.values()){
-			if(item.equals(tmp)) {//비교가 안됨..
-				i=true;
-				return item;
-			}
-		}
-		return null;
+		
+		return edges.get(outVertex.getId()+ "|" + label + "|" +inVertex.getId()); // 이러한 EdgeId 를 가지는 Edge 찾아서 반환
+		
+	
 //		return (Edge)edges.get(outVertex.getId().toString());
 	}
 
-	@Override
-	public Iterable<Edge> getEdges() {
-		// return all the edges
-		return new ArrayList<Edge>(edges.values());
-	}
+	
 
 	@Override
-	public Iterable<Edge> getEdges(String key, Object value) {
+	public Iterable<Edge> getEdges(String key, Object value) { // key:value 와 매칭되는 propertiy 를 가진 Edge 들 Iterabnle 객체로 반환하기
+		List<Edge> egs = new ArrayList<>();
+		for(Team4Edge edge : edges.values()) {
+			if(edge.properties.get(key) == value) {
+				egs.add(edge);
+			}
+		}
+		Iterator<Edge> e = egs.iterator();
+		// TODO Auto-generated method stub
+		return (Iterable<Edge>) e;
+	}
+	@Override
+	public Iterable<Edge> getEdges() { // 이 그래프에 연결되어있는 모든 Edges Iterable 객체로 반환 
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
