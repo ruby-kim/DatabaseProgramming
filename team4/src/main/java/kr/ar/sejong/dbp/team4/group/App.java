@@ -1,3 +1,4 @@
+
 package kr.ar.sejong.dbp.team4.group;
 
 import java.sql.SQLException;
@@ -33,11 +34,18 @@ public class App {
 		Vertex v1 = g.addVertex("5");
 		Vertex v2 = g.addVertex("6");
 		Vertex v3 = g.addVertex("7");
-		System.out.println(g.addEdge(v00, v1, "test1"));
-		System.out.println(g.addEdge(v2, v3, "test2"));
-		System.out.println(g.getEdges());
 		
-		System.out.println("get"+g.getEdge(v00, v1, "test1"));
+		v1.setProperty("x", 300);
+		v1.setProperty("y", 200);
+		v1.setProperty("name", "James");
+		v1.setProperty("Date", "2020-11-02");
+		
+		System.out.println(v1.getPropertyKeys());
+//		System.out.println(g.addEdge(v00, v1, "test1"));
+//		System.out.println(g.addEdge(v2, v3, "test2"));
+//		System.out.println(g.getEdges());
+//		
+//		System.out.println("get"+g.getEdge(v00, v1, "test1"));
 	}
 
 }
