@@ -25,7 +25,7 @@ public class Team4Edge implements Edge{
 	private ResultSet rs;
 	HashMap<String  , Object> properties;
 	 // 만약 해쉬맵 사용하지 못한다면 , properties 는 JSONParser 를 이용하여 파싱해서 찾아야
-	Team4Edge() throws SQLException{ // 생성자 , properties 넣을 때 필요 
+	Team4Edge() throws SQLException{ // 생성자 , properties 넣을 때 필요  // 안재현수정
 		properties = new HashMap<>();
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "1234"); // 본인에 맞춰서 
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
@@ -33,13 +33,15 @@ public class Team4Edge implements Edge{
 		stmt.executeUpdate("USE Team4Graph");
 	}
 	
-	Team4Edge(Vertex outVertex , Vertex inVertex , String label , Team4Graph graph){
+	Team4Edge(Vertex outVertex , Vertex inVertex , String label , Team4Graph graph){ // 안재현수정
 		this.outVertex = outVertex;
 		this.inVertex = inVertex;
 		this.id = outVertex.getId() + "|" + label + "|" + inVertex.getId();
 		this.label = label;
 		this.graph = graph;
 		try {
+			connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "1234"); // 본인에 맞춰서 
+			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO edge VALUES(?,?,?);");
 			pstmt.clearParameters();
 			pstmt.setObject(1, outVertex.getId()); // set properties
@@ -55,7 +57,7 @@ public class Team4Edge implements Edge{
 
 
 	@Override
-	public Object getProperty(String key) {
+	public Object getProperty(String key) { // 안재현수정
 		// TODO Auto-generated method stub
 		return properties.get(key);
 	}
@@ -63,7 +65,7 @@ public class Team4Edge implements Edge{
 
 
 	@Override
-	public Set<String> getPropertyKeys() { // 모든 key 값들 리턴하는 함수 
+	public Set<String> getPropertyKeys() { // 모든 key 값들 리턴하는 함수  // 안재현수정
 		// TODO Auto-generated method stub
 		Set<String> keys = properties.keySet();
 	
@@ -73,7 +75,7 @@ public class Team4Edge implements Edge{
 
 
 	@Override
-	public void setProperty(String key, Object value) { // 프로퍼티 설정하기 , 또한 엣지테이블 select 후 그것에 맞는 edge 찾아서 넣기 
+	public void setProperty(String key, Object value) { // 프로퍼티 설정하기 , 또한 엣지테이블 select 후 그것에 맞는 edge 찾아서 넣기 //안재현수정
 		// TODO Auto-generated method stub
 		
 		properties.put(key, value);
@@ -90,7 +92,7 @@ public class Team4Edge implements Edge{
 
 
 	@Override
-	public Object getId() {
+	public Object getId() { // 안재현수정
 		// TODO Auto-generated method stub
 		return this.id;
 	}
@@ -98,7 +100,7 @@ public class Team4Edge implements Edge{
 
 
 	@Override
-	public Vertex getVertex(Direction direction) throws IllegalArgumentException {
+	public Vertex getVertex(Direction direction) throws IllegalArgumentException { //안재현수정
 		// TODO Auto-generated method stub
 		if(direction.equals(direction.OUT)) // out 이면 outvertex return 그게 아니라면 invertex return  >>>>>> 문법 맞는지 모르겠음 
 			return outVertex;
@@ -110,7 +112,7 @@ public class Team4Edge implements Edge{
 
 
 	@Override
-	public String getLabel() {
+	public String getLabel() { // 
 		// TODO Auto-generated method stub
 		return this.label;
 	}
