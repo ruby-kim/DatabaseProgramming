@@ -151,7 +151,23 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Edge> getEdges(String key, Object value) {
-		// TODO Auto-generated method stub
+		try {//박병훈 코드
+			ResultSet rs = stmt.executeQuery(
+					"SELECT source, destination, label FROM edge where " 
+							+ "JSON_VALUE(properties,'$." + key + "') = " + value + "");
+			ArrayList<Edge> arr = new ArrayList<Edge>();
+			while (rs.next()) {
+				Team4Vertex outvertex = new Team4Vertex(rs.getInt(1), this);
+				Team4Vertex invertex = new Team4Vertex(rs.getInt(2), this);
+				Team4Edge edge = new Team4Edge(outvertex, invertex, rs.getString(3), null);
+				edge.setProperty(key, value);
+				arr.add(edge);
+			}
+			return arr;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 }
