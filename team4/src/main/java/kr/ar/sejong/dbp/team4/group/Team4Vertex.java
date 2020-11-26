@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
 
 import kr.ar.sejong.dbp.team4.Direction;
 import kr.ar.sejong.dbp.team4.Edge;
@@ -30,7 +31,7 @@ public class Team4Vertex implements Vertex {
 		this.id = id;
 		this.graph = graph;
 		
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "1234");
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "zpfldj");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("USE Team4Graph");
 		pstmt = connection.prepareStatement("INSERT INTO vertex VALUES (?,?);");
@@ -54,7 +55,10 @@ public class Team4Vertex implements Vertex {
     @Override
     public Object getProperty(String key) {
     	try{
-    		return stmt.executeQuery("SELECT JSON_VALUE(properties, $."+key+") FROM Vertex WHERE id = "+this.id+";");
+    		ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Vertex WHERE id = "+this.id+";");
+    		set.next();
+    		property = set.getString(1);
+    		return property;
     	} catch(Exception e){
     		return null;
     	}
@@ -62,6 +66,22 @@ public class Team4Vertex implements Vertex {
 
     @Override
     public Set<String> getPropertyKeys() {
+    	try {
+			ResultSet set = stmt.executeQuery("SELECT JSON_KEYS(properties) FROM Vertex WHERE id = "+this.id+";");
+			set.next();
+			String propKeys = set.getString(1);
+			JSONArray arr = new JSONArray(propKeys);
+			
+			HashSet<String> returnKeys = new HashSet<String>();
+			
+			for(int i=0;i<arr.length();i++) {
+				returnKeys.add(arr.getString(i));
+			}
+			return returnKeys;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
         return null;
     }
     
@@ -95,6 +115,7 @@ public class Team4Vertex implements Vertex {
     	else {
     		try {
     			ResultSet set = stmt.executeQuery("SELECT properties from vertex WHERE ID = "+this.id+";");	
+    			set.next();
     			property = set.getString(1);
     			property = property.substring(1,property.length()-1);	
 			} catch (SQLException e1) {
@@ -103,7 +124,7 @@ public class Team4Vertex implements Vertex {
     		//value가 String 이다.
         	if(value instanceof String) {
         		try {
-        		stmt.executeUpdate("UPDATE vertex SET properties = '{"+property+"\"" + key +"\":\""+ value + "\"}' WHERE ID ="+ this.id +";" );
+        		stmt.executeUpdate("UPDATE vertex SET properties = '{"+property+",\"" + key +"\":\""+ value + "\"}' WHERE ID ="+ this.id +";" );
         		}
         		catch(Exception e){
         			return;
@@ -112,7 +133,7 @@ public class Team4Vertex implements Vertex {
         	// value가 숫자형.
         	else {
         		try {
-            		stmt.executeUpdate("UPDATE vertex SET properties = '{"+property+"\"" + key +"\":"+ value + "}' WHERE ID ="+ this.id +";" );
+            		stmt.executeUpdate("UPDATE vertex SET properties = '{"+property+",\"" + key +"\":"+ value + "}' WHERE ID ="+ this.id +";" );
             		}
             		catch(Exception e){
             			return;
