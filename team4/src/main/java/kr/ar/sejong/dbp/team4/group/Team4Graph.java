@@ -30,8 +30,6 @@ public class Team4Graph implements Graph{
 	  stmt.executeUpdate("USE Team4Graph");
 	  stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");   
 	  stmt.executeUpdate("CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
-	  stmt.executeUpdate("CREATE INDEX vi ON vertex (id);");
-	  stmt.executeUpdate("CREATE INDEX ei ON edge (source, destination);");
 	}
     @Override
     public Vertex addVertex(String id)
@@ -73,7 +71,7 @@ public class Team4Graph implements Graph{
 	             while(rs.next())
 	             {
 	            	 Team4Vertex ver = new Team4Vertex(rs.getInt(1), this);
-	            	 //ver.setProperty(key, value);
+	            	 //ver.setProperty(key, value); 프로퍼티 부분만 다시 짜보겠습니다.
 	            	 arr.add(ver);
 	             }  
 	             return arr;
