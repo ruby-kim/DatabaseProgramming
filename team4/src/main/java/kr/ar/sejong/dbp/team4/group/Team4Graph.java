@@ -26,7 +26,7 @@ public class Team4Graph implements Graph{
    
    Team4Graph() throws SQLException
    { // 박병훈 코드 수정
-     connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "0000");
+     connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "zpfldj");
      stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
      stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
      stmt.executeUpdate("USE Team4Graph");
@@ -41,8 +41,8 @@ public class Team4Graph implements Graph{
           pstmt.clearParameters();
           pstmt.setInt(1, Integer.parseInt(id));
           pstmt.executeUpdate();
-          Team4Vertex vertex = new Team4Vertex(Integer.parseInt(id),this);//Team4Vertex 생성자
-          return (Vertex)vertex;
+          Vertex vertex = new Team4Vertex(Integer.parseInt(id),this);//Team4Vertex 생성자
+          return vertex;
        }catch(Exception ex) {
           return null;
        }
@@ -56,14 +56,14 @@ public class Team4Graph implements Graph{
              if(rs1.next() == false)
             	 return null;
              
-             Team4Vertex ver = new Team4Vertex(Integer.parseInt(id), this); // 버텍스 만들기
+             Vertex ver = new Team4Vertex(Integer.parseInt(id), this); // 버텍스 만들기
              return ver;             
           }catch(Exception ex)
           {
              return null;
           }
        }
-
+   
    @Override
    public Iterable<Vertex> getVertices() {
          //박병훈 코드 수정
@@ -108,21 +108,17 @@ public class Team4Graph implements Graph{
 
    @Override
    public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
-      try {
-         PreparedStatement pstmt = connection.prepareStatement("INSERT INTO edge VALUES(?,?,?,'{\"KEY1\":\"VALUE1\"}');");
-         //properties는 어떻게 넣어야 할까요?
-         //id값이 없는데 edges를 어케만들어야할까요..?
-         //vertex에는 in,out edge 표시 안해도 될까요?
-         //죄송합니다 ㅠ-ㅠ
-         pstmt.clearParameters();
-         pstmt.setObject(1, outVertex.getId()); // set properties
-         pstmt.setObject(2, inVertex.getId());
-         pstmt.setString(3, label);
-         pstmt.executeUpdate();
-         
-         Team4Edge edge = new Team4Edge(outVertex, inVertex, label, this);
-           return edge;
-      } catch (SQLException e) {
+	   try {
+    	  PreparedStatement pstmt = connection.prepareStatement("INSERT INTO edge(source,destination,label) VALUES(?,?,?);");
+    	  pstmt.clearParameters();
+    	  pstmt.setObject(1, outVertex.getId()); // set properties
+    	  pstmt.setObject(2, inVertex.getId());
+    	  pstmt.setString(3, label);
+    	  pstmt.executeUpdate();
+
+    	  Edge edge = new Team4Edge(outVertex, inVertex, label, this);
+          return edge;
+      } catch (Exception e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
       }
