@@ -48,7 +48,7 @@ public class Team4Graph implements Graph{
        }
     }
    @Override
-     public Vertex getVertex(String id) {
+     public Vertex getVertex(String id) { // 임시 edge 가 다 구현되었을때 다시 짜겠습니다.
        //박병훈 코드
           try {// 해당 버텍스가 있는지 찾고 없다면  null을 있다면 vertex로 반환합니다.
              ResultSet rs1 = stmt.executeQuery("SELECT * FROM vertex where id = " + Integer.parseInt(id) + ";");
@@ -67,7 +67,7 @@ public class Team4Graph implements Graph{
    @Override
    public Iterable<Vertex> getVertices() {
          //박병훈 코드 수정
-         try {// 해당 버텍스가 있는지 찾고 없다면  null을 있다면 vertex로 반환합니다.
+         try {// 데베를 사용하여 버텍스들을 가져온후 어레이리스트로 반환합니다.
                 ResultSet rs = stmt.executeQuery("SELECT id FROM vertex;"); 
                 ArrayList<Vertex> arr = new ArrayList<Vertex>();
                 while(rs.next())
@@ -92,8 +92,12 @@ public class Team4Graph implements Graph{
          PreparedStatement pstmt = connection.prepareStatement("SELECT JSON_VALUE(properties,'$.?') FROM vertex;");
          pstmt.clearParameters();
          pstmt.setString(1, (String) value); // set properties
-         Team4Vertex vertex;
          ResultSet rset =  pstmt.executeQuery();
+         
+         ArrayList<Vertex> arr = new ArrayList<Vertex>();
+         
+         Team4Vertex ver = new Team4Vertex(rset.getInt(1), this);
+         arr.add(ver);
 
       } catch (SQLException e) {
          // TODO Auto-generated catch block
