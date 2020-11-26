@@ -84,11 +84,10 @@ public class Team4Graph implements Graph {
 	public Iterable<Vertex> getVertices(String key, Object value) {
 		// 양승주 코드 , 박병훈 수정(어레이 추가 및 구문 수정)
 		try {
-			ResultSet rset = stmt.executeQuery("SELECT id FROM vertex where " +
-					"JSON_VALUE(properties,'$."+ key + "') = " + value +""); 
+			ResultSet rset = stmt.executeQuery(
+					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$." + key + "') = " + value + "");
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
-			while(rset.next())
-			{
+			while (rset.next()) {
 				Team4Vertex ver = new Team4Vertex(rset.getInt(1), this);
 				arr.add(ver);
 			}
@@ -103,7 +102,7 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
-		try {// 김지수 코드
+		try {// 양승주 코드, 김지수 코드 수정
 			PreparedStatement pstmt = connection
 					.prepareStatement("INSERT INTO edge(source,destination,label) VALUES(?,?,?);");
 			pstmt.clearParameters();
@@ -128,8 +127,26 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Edge> getEdges() {
-		// return all the edges
-		return null;
+		// 박병훈 코드 (좀더 효율적인 코드가 있지 않을까 싶습니다)
+		try {// 데베를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
+			ResultSet rs = stmt.executeQuery("SELECT * FROM edge;");
+			ArrayList<Edge> arr = new ArrayList<Edge>();
+			while (rs.next()) {
+				Team4Vertex outvertex = new Team4Vertex(rs.getInt(1), this);
+				Team4Vertex invertex = new Team4Vertex(rs.getInt(2), this);
+				Team4Edge edge = new Team4Edge(outvertex, invertex, rs.getString(3), null);
+				JSONObject jval = new JSONObject(rs.getString(4)); // json object 이용
+				Iterator<String> keys = jval.keys();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					edge.setProperty(key, jval.get(key));
+				}
+				arr.add(edge);
+			}
+			return arr;
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
 	@Override
