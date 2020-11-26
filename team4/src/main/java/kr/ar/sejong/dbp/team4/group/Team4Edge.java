@@ -39,7 +39,7 @@ public class Team4Edge implements Edge{
 		this.label = label;
 		this.graph = graph;
 		
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "zpfldj"); // 본인에 맞춰서 
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "0000"); // 본인에 맞춰서 
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("USE Team4Graph");
 		
@@ -108,7 +108,7 @@ public class Team4Edge implements Edge{
 		// TODO Auto-generated method stub
 		return this.label;
 	}
-    @Override	//	
+    @Override	//김지수
 	public String toString() {
 		return "e[" +outVertex.getId()+"-"+label+"->"+inVertex.getId()+"]";
 	}
