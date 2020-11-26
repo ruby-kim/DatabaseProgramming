@@ -84,7 +84,7 @@ public class Team4Graph implements Graph {
 	public Iterable<Vertex> getVertices(String key, Object value) {
 		// 양승주 코드 , 박병훈 수정(어레이 추가 및 구문 수정)
 		try {
-			ResultSet rset = stmt.executeQuery("SELECT id FROM vertex where" +
+			ResultSet rset = stmt.executeQuery("SELECT id FROM vertex where " +
 					"JSON_VALUE(properties,'$."+ key + "') = " + value +""); 
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
 			while(rset.next())
