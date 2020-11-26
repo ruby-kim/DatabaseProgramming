@@ -6,8 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONArray;
@@ -22,11 +24,11 @@ public class Team4Vertex implements Vertex {
 	private Statement stmt;
 	private ResultSet rs;
 	private Team4Graph graph;
-	private PreparedStatement pstmt;
     //예: string 형태의 고유 아이디, '|' 사용 금지
     private int id;
     private String property = null;
 
+    //15011137 김지수
     Team4Vertex(final int id,final Team4Graph graph) throws SQLException{
 		this.id = id;
 		this.graph = graph;
@@ -34,24 +36,104 @@ public class Team4Vertex implements Vertex {
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "zpfldj");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("USE Team4Graph");
-		pstmt = connection.prepareStatement("INSERT INTO vertex VALUES (?,?);");
 	}
     
+    //15011137 김지수
     @Override
     public Iterable<Edge> getEdges(Direction direction, String... labels) {
+    	if(direction.equals(Direction.OUT)) {
+    		return this.getOutEdges(labels);
+    	} else if(direction.equals(Direction.IN)) {
+    			return this.getInEdges(labels);
+    	}
         return null;
     }
-
+    
+    //15011137 김지수
+    private Iterable<Edge> getInEdges(String... labels){
+    	List<Edge> totalEdges = new ArrayList<Edge>();	
+    	String label;
+    	try {
+			ResultSet set = stmt.executeQuery("SELECT * FROM edge WHERE destination = "+this.id+" AND label = \"label\";");
+			while(set.next()) {
+				Vertex sVertex = new Team4Vertex(set.getInt(1),graph);
+				Vertex dVertex = new Team4Vertex(set.getInt(2),graph);
+				label = set.getString(3);
+				Edge newEdge = new Team4Edge(sVertex,dVertex,label,graph);
+				totalEdges.add(newEdge);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return totalEdges;
+    }
+    
+    //15011137 김지수
+    private Iterable<Edge> getOutEdges(String... labels){
+    	List<Edge> totalEdges = new ArrayList<Edge>();
+    	String label;
+    	try {
+			ResultSet set = stmt.executeQuery("SELECT * FROM edge WHERE source = "+this.id+" AND label = \"label\";");
+			while(set.next()) {
+				Vertex sVertex = new Team4Vertex(set.getInt(1),graph);
+				Vertex dVertex = new Team4Vertex(set.getInt(2),graph);
+				label = set.getString(3);
+				Edge newEdge = new Team4Edge(sVertex,dVertex,label,graph);
+				totalEdges.add(newEdge);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return totalEdges;
+    }
+    
+    //15011137 김지수
     @Override
     public Iterable<Vertex> getVertices(Direction direction, String... labels) {
-        return null;
+    	List<Vertex> totalVertices = new ArrayList<Vertex>();
+    	
+    	int newId;
+    	if(direction.equals(Direction.OUT)) {
+			try {
+				ResultSet set = stmt.executeQuery("SELECT * FROM edge WHERE source = "+this.id+" AND label = \"label\";");
+				while(set.next()) {
+					newId = set.getInt(2);
+					Vertex newVertex = new Team4Vertex(newId, graph);
+					totalVertices.add(newVertex);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}else {
+    		try {
+				ResultSet set = stmt.executeQuery("SELECT * FROM edge WHERE destination = "+this.id+" AND label = \"label\";");
+				while(set.next()) {
+					newId = set.getInt(1);
+					Vertex newVertex = new Team4Vertex(newId, graph);
+					totalVertices.add(newVertex);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	
+    	 
+        return totalVertices;
     }
 
+    //15011137 김지수
     @Override
     public Edge addEdge(String label, Vertex inVertex) {
         return this.graph.addEdge(this, inVertex, label);
     }
 
+    //15011137 김지수
     @Override
     public Object getProperty(String key) {
     	try{
@@ -64,6 +146,7 @@ public class Team4Vertex implements Vertex {
     	}
     }
 
+    //15011137 김지수
     @Override
     public Set<String> getPropertyKeys() {
     	try {
@@ -86,6 +169,7 @@ public class Team4Vertex implements Vertex {
     }
     
 	// '{"key":"value"}'
+    //15011137 김지수
     @Override
     public void setProperty(String key, Object value) {    	
     	//property가 비어있으면 선언
@@ -142,12 +226,15 @@ public class Team4Vertex implements Vertex {
     	}
     }
 
+    //15011137 김지수
     @Override
     public Object getId() {
         return id;
     }
+    
+    //15011137 김지수
     @Override
 	public String toString() {
-		return "[" + id + "]";
+		return "v[" + id + "]";
 	}
 }
