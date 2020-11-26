@@ -17,51 +17,72 @@ import kr.ar.sejong.dbp.team4.Graph;
 import kr.ar.sejong.dbp.team4.Vertex;
 
 public class Team4Graph implements Graph{
-
-    protected Map<String, Team4Vertex> vertices = new HashMap<String, Team4Vertex>();
-    protected Map<String, Team4Edge> edges = new HashMap<String, Team4Edge>();
     
     private Connection connection;
 	private Statement stmt;
 	private ResultSet rs;
 	
 	Team4Graph() throws SQLException
-	{
-		this.vertices = new HashMap<String, Team4Vertex>();
-		this.edges = new HashMap<String, Team4Edge>();
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "zpfldj");
-		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
-		stmt.executeUpdate("USE Team4Graph");
-		stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");	
-		stmt.executeUpdate("CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
+	{ // 박병훈 코드 수정
+	  connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "0000");
+	  stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
+	  stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
+	  stmt.executeUpdate("USE Team4Graph");
+	  stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");   
+	  stmt.executeUpdate("CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
+	  stmt.executeUpdate("CREATE INDEX vi ON vertex (id);");
+	  stmt.executeUpdate("CREATE INDEX ei ON edge (source, destination);");
 	}
     @Override
     public Vertex addVertex(String id)
-    {
-    	try {
-    		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO vertex (ID) VALUES(?);");
-    		pstmt.clearParameters();
-    		pstmt.setInt(1, Integer.parseInt(id)); // set id
-//    		pstmt.setString(2, "{\"none\": \"none\"}"); // set properties
-    		pstmt.executeUpdate();
-    		Team4Vertex vertex = new Team4Vertex(Integer.parseInt(id),this);//Team4Vertex 생성자
-    		vertices.put(id, vertex);
-    		return (Vertex)vertex;
-    	}catch(Exception ex) {
-    		return null;
-    	}
+    { //박병훈 코드 수정
+       try {
+          PreparedStatement pstmt = connection.prepareStatement("INSERT INTO vertex (id) VALUES(?);");
+          pstmt.clearParameters();
+          pstmt.setInt(1, Integer.parseInt(id)); // set id
+          pstmt.executeUpdate();
+          Team4Vertex vertex = new Team4Vertex(Integer.parseInt(id),this);//Team4Vertex 생성자
+          return (Vertex)vertex;
+       }catch(Exception ex) {
+          return null;
+       }
     }
-
 	@Override
-	public Vertex getVertex(String id) {
-		return (Vertex)vertices.get(id);
-	}
+	  public Vertex getVertex(String id) {
+	    //박병훈 코드
+	       try {// 해당 버텍스가 있는지 찾고 없다면  null을 있다면 vertex로 반환합니다.
+	          ResultSet rs = stmt.executeQuery("SELECT DISTINCT id FROM vertex WHERE id = " + Integer.parseInt(id) + ";");          
+	          if(rs != null)      
+	             return new Team4Vertex(Integer.parseInt(id),this);
+	          else
+	             return null;
+	       }catch(Exception ex)
+	       {
+	          return null;
+	       }
+	    }
 
 	@Override
 	public Iterable<Vertex> getVertices() {
-		return new ArrayList<Vertex>(vertices.values());
-	}
+	      //박병훈 코드 수정
+	      try {// 해당 버텍스가 있는지 찾고 없다면  null을 있다면 vertex로 반환합니다.
+	             ResultSet rs = stmt.executeQuery("SELECT * FROM vertex;"); 
+	             if(rs == null)      
+	                return null;
+	             ArrayList<Vertex> arr = new ArrayList<Vertex>();
+	             while(rs.next())
+	             {
+	            	 Team4Vertex ver = new Team4Vertex(rs.getInt(1), this);
+	            	 //ver.setProperty(key, value);
+	            	 arr.add(ver);
+	             }  
+	             return arr;
+	          }catch(Exception ex)
+	          {
+	             return null;
+	          }
+	   }
+
 
 	@Override
 	public Iterable<Vertex> getVertices(String key, Object value) {
@@ -72,11 +93,8 @@ public class Team4Graph implements Graph{
 			PreparedStatement pstmt = connection.prepareStatement("SELECT JSON_VALUE(properties,'$.?') FROM vertex;");
 			pstmt.clearParameters();
 			pstmt.setString(1, (String) value); // set properties
-
-    		
 			Team4Vertex vertex;
     		ResultSet rset =  pstmt.executeQuery();
-    		vertices = new HashMap<String, Team4Vertex>();
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -100,7 +118,6 @@ public class Team4Graph implements Graph{
 			pstmt.executeUpdate();
 			
 			Team4Edge edge = new Team4Edge(outVertex, inVertex, label, this);
-	        this.edges.put(outVertex.getId().toString(), edge);//일단 outvertex로..
 	        return edge;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -111,22 +128,13 @@ public class Team4Graph implements Graph{
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		Team4Edge tmp = new Team4Edge(outVertex, inVertex, label, this);
-		boolean i = false;
-		for(Edge item : edges.values()){
-			if(item.equals(tmp)) {//비교가 안됨..
-				i=true;
-				return item;
-			}
-		}
 		return null;
-//		return (Edge)edges.get(outVertex.getId().toString());
 	}
 
 	@Override
 	public Iterable<Edge> getEdges() {
 		// return all the edges
-		return new ArrayList<Edge>(edges.values());
+		return null;
 	}
 
 	@Override
