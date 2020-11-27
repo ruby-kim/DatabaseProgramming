@@ -24,7 +24,8 @@ public class Team4Graph implements Graph {
 	private Statement stmt;
 	private ResultSet rs;
 
-	Team4Graph() throws SQLException { // 박병훈 코드 수정
+	Team4Graph() throws SQLException { 
+		//16011176 박병훈
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306", "root", "0000");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
@@ -36,7 +37,8 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Vertex addVertex(String id) {
-		try {// 박병훈 코드
+		//16011176 박병훈
+		try {
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO vertex (id) VALUES(?);");
 			pstmt.clearParameters();
 			pstmt.setInt(1, Integer.parseInt(id));
@@ -50,7 +52,7 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Vertex getVertex(String id) {
-		// 박병훈 코드
+		// 16011176 박병훈
 		try {// 해당 버텍스가 있는지 찾고 없다면 null을 있다면 vertex로 반환합니다.
 			ResultSet rs1 = stmt.executeQuery("SELECT * FROM vertex where id = " + Integer.parseInt(id) + ";");
 
@@ -66,7 +68,7 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Vertex> getVertices() {
-		// 박병훈 코드 수정
+		// 16011176 박병훈
 		try {// 데베를 사용하여 버텍스들을 가져온후 어레이리스트로 반환합니다.
 			ResultSet rs = stmt.executeQuery("SELECT id FROM vertex;");
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
@@ -82,7 +84,8 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Vertex> getVertices(String key, Object value) {
-		// 양승주 코드 , 박병훈 수정(어레이 추가 및 구문 수정)
+		//16011189 양승주
+		//16011176 박병훈 
 		try {
 			ResultSet rset = stmt.executeQuery(
 					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$." + key + "') = " + value + "");
@@ -93,7 +96,6 @@ public class Team4Graph implements Graph {
 			}
 			return arr;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -102,7 +104,9 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
-		try {// 양승주 코드, 김지수 코드 수정
+		//16011189 양승주
+		//15011137 김지수
+		try {
 			PreparedStatement pstmt = connection
 					.prepareStatement("INSERT INTO edge(source,destination,label) VALUES(?,?,?);");
 			pstmt.clearParameters();
@@ -114,7 +118,6 @@ public class Team4Graph implements Graph {
 			Edge edge = new Team4Edge(outVertex, inVertex, label, this);
 			return edge;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -122,12 +125,13 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		//16011140 안재현 
+		//15011137 김지수
+		//16011140 안재현
 		try{
-		ResultSet rs1 = stmt.executeQuery("SELECT * FROM Edge where source = " + outVertex.getId() +"and" + "destination = " + inVertex.getId()+ "and label = "+label+ ";");
+		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
 		if (rs1.next() == false)
 			return null; // 일치하는 것이 없으면 null 반환
-		Team4Edge edge = new Team4Edge(outVertex , inVertex , label , this);
+		Edge edge = new Team4Edge(outVertex , inVertex , label , this);
 		return edge;
 		}catch (Exception ex) {
 			return null;
@@ -137,8 +141,8 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Edge> getEdges() {
-		// 박병훈 코드 (좀더 효율적인 코드가 있지 않을까 싶습니다)
-		try {// 데베를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
+		// 16011176 박병훈
+		try {// DB를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
 			ResultSet rs = stmt.executeQuery("SELECT * FROM edge;");
 			ArrayList<Edge> arr = new ArrayList<Edge>();
 			while (rs.next()) {
@@ -161,7 +165,8 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Edge> getEdges(String key, Object value) {
-		try {//박병훈 코드
+		//16011176 박병훈
+		try {
 			ResultSet rs = stmt.executeQuery(
 					"SELECT source, destination, label FROM edge where " 
 							+ "JSON_VALUE(properties,'$." + key + "') = " + value + "");
@@ -175,7 +180,6 @@ public class Team4Graph implements Graph {
 			}
 			return arr;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
