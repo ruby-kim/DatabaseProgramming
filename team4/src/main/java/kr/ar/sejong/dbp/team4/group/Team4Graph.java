@@ -122,7 +122,17 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		return null;
+		//16011140 안재현 
+		try{
+		ResultSet rs1 = stmt.executeQuery("SELECT * FROM Edge where source = " + outVertex.getId() +"and" + "destination = " + inVertex.getId()+ "and label = "+label+ ";");
+		if (rs1.next() == false)
+			return null; // 일치하는 것이 없으면 null 반환
+		Team4Edge edge = new Team4Edge(outVertex , inVertex , label , this);
+		return edge;
+		}catch (Exception ex) {
+			return null;
+		}
+		
 	}
 
 	@Override
