@@ -125,7 +125,6 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		//15011137 김지수
 		//17011654 김경남
 		//16011189 양승주
 		try{
