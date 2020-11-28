@@ -38,6 +38,7 @@ public class Team4Graph implements Graph {
 	@Override
 	public Vertex addVertex(String id) {
 		//16011176 박병훈
+		//17011654 김경남
 		try {
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO vertex (id) VALUES(?);");
 			pstmt.clearParameters();
@@ -53,6 +54,7 @@ public class Team4Graph implements Graph {
 	@Override
 	public Vertex getVertex(String id) {
 		// 16011176 박병훈
+		// 17011654 김경남
 		try {// 해당 버텍스가 있는지 찾고 없다면 null을 있다면 vertex로 반환합니다.
 			ResultSet rs1 = stmt.executeQuery("SELECT * FROM vertex where id = " + Integer.parseInt(id) + ";");
 
@@ -69,6 +71,7 @@ public class Team4Graph implements Graph {
 	@Override
 	public Iterable<Vertex> getVertices() {
 		// 16011176 박병훈
+		// 17011654 김경남
 		try {// 데베를 사용하여 버텍스들을 가져온후 어레이리스트로 반환합니다.
 			ResultSet rs = stmt.executeQuery("SELECT id FROM vertex;");
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
@@ -85,7 +88,8 @@ public class Team4Graph implements Graph {
 	@Override
 	public Iterable<Vertex> getVertices(String key, Object value) {
 		//16011189 양승주
-		//16011176 박병훈 
+		//16011176 박병훈
+		//17011654 김경남
 		try {
 			ResultSet rset = stmt.executeQuery(
 					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$." + key + "') = " + value + "");
@@ -106,6 +110,7 @@ public class Team4Graph implements Graph {
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
 		//16011189 양승주
 		//15011137 김지수
+		//17011654 김경남
 		try {
 			PreparedStatement pstmt = connection
 					.prepareStatement("INSERT INTO edge(source,destination,label) VALUES(?,?,?);");
@@ -127,6 +132,7 @@ public class Team4Graph implements Graph {
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
 		//17011654 김경남
 		//16011189 양승주
+		//17011654 김경남
 		try{
 		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
 		if (rs1.next() == false)
@@ -142,6 +148,7 @@ public class Team4Graph implements Graph {
 	@Override
 	public Iterable<Edge> getEdges() {
 		// 16011176 박병훈
+		//17011654 김경남
 		try {// DB를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
 			ResultSet rs = stmt.executeQuery("SELECT * FROM edge;");
 			ArrayList<Edge> arr = new ArrayList<Edge>();
