@@ -126,7 +126,8 @@ public class Team4Graph implements Graph {
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
 		//15011137 김지수
-		//16011140 안재현
+		//17011654 김경남
+		//16011189 양승주
 		try{
 		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
 		if (rs1.next() == false)
