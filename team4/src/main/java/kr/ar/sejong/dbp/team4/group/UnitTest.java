@@ -10,7 +10,7 @@ import kr.ar.sejong.dbp.team4.DatabaseManager;
 
 public class UnitTest {
 
-	public static void doTest(Graph g) {
+	public static void doTest(Graph g) throws SQLException {
 
 		// 그래프 생성
 		for (int i = 0; i < 13; i++) {
@@ -68,7 +68,11 @@ public class UnitTest {
 				
 		// 이름 교체하세요
 		Graph g = new Team4Graph();
-		doTest(g);
+		try {
+			doTest(g);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
