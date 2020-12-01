@@ -6,6 +6,7 @@ import kr.ar.sejong.dbp.team4.Direction;
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Graph;
 import kr.ar.sejong.dbp.team4.Vertex;
+import kr.ar.sejong.dbp.team4.DatabaseManager;
 
 public class UnitTest {
 
@@ -57,10 +58,17 @@ public class UnitTest {
 	}
 
 	public static void main(String[] args) throws SQLException {
+		// DB 연결
+		DatabaseManager dbMgr = DatabaseManager.getInstance();
+		try {
+			dbMgr.initialize("3307", "0000");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+				
 		// 이름 교체하세요
 		Graph g = new Team4Graph();
 		doTest(g);
 	}
 
 }
-
