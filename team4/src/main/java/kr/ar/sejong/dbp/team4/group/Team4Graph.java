@@ -45,10 +45,7 @@ public class Team4Graph implements Graph {
 		//16011176 박병훈
 		//17011654 김경남
 		try {
-			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO vertex (id) VALUES(?);");
-			pstmt.clearParameters();
-			pstmt.setInt(1, Integer.parseInt(id));
-			pstmt.executeUpdate();
+			m_stmt.executeLargeUpdate("INSERT INTO vertex (id) VALUES(?);");
 			Team4Vertex vertex = new Team4Vertex(Integer.parseInt(id), this);// Team4Vertex 생성자
 			return (Vertex) vertex;
 		} catch (Exception ex) {
@@ -85,7 +82,7 @@ public class Team4Graph implements Graph {
 				arr.add(ver);
 			}
 			return arr;
-		} catch (Exception ex) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -117,17 +114,13 @@ public class Team4Graph implements Graph {
 		//15011137 김지수
 		//17011654 김경남
 		try {
-			PreparedStatement pstmt = connection
-					.prepareStatement("INSERT INTO edge(source,destination,label) VALUES(?,?,?);");
-			pstmt.clearParameters();
-			pstmt.setObject(1, outVertex.getId()); // set properties
-			pstmt.setObject(2, inVertex.getId());
-			pstmt.setString(3, label);
-			pstmt.executeUpdate();
-
+			Object outID = outVertex.getId();
+			Object inID = inVertex.getId();
 			Edge edge = new Team4Edge(outVertex, inVertex, label, this);
+			m_stmt.executeUpdate(
+					"INSERT INTO edge(source,destination,label) VALUES("+ outID +", " + inID + ", " + label + ");");
 			return edge;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -138,15 +131,15 @@ public class Team4Graph implements Graph {
 		//16011189 양승주
 		//17011654 김경남
 		try{
-		ResultSet rs1 = m_stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
-		if (rs1.next() == false)
-			return null; // 일치하는 것이 없으면 null 반환
-		Edge edge = new Team4Edge(outVertex , inVertex , label , this);
-		return edge;
-		}catch (Exception ex) {
-			return null;
+			ResultSet rs1 = m_stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
+			if (rs1.next() == false)
+				return null; // 일치하는 것이 없으면 null 반환
+			Edge edge = new Team4Edge(outVertex , inVertex , label , this);
+			return edge;
+		}catch (SQLException e) {
+			e.printStackTrace();
 		}
-		
+		return null;
 	}
 
 	@Override
