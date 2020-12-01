@@ -16,7 +16,7 @@ public class Team4Graph implements Graph {
 
 	private Statement m_stmt = null;
 	
-	private void setStatement(Statement stmt) {
+	void setStatement(Statement stmt) {
 		// 17011654 김경남
 		m_stmt = stmt;
 	}
