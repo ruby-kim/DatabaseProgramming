@@ -57,7 +57,7 @@ public class Team4Edge implements Edge{
 		// 16011140 안재현
 		// 15011137 김지수
 		try{
-			ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Edge WHERE source = "+this.outVertex.getId()+" and destination = " + this.inVertex.getId() +" and label = " +"'"+ this.label "'"+";");
+			ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Edge WHERE source = "+this.outVertex.getId()+" and destination = " + this.inVertex.getId() +" and label = '" + this.label +"';");
 			set.next();
 			return set.getString(1);
 		}catch(SQLException e) {
