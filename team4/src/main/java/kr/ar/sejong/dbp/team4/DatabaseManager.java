@@ -39,7 +39,6 @@ public class DatabaseManager { //17011654 김경남
 	public static DatabaseManager getInstance() {
 		if(m_instance == null) 
 			m_instance = new DatabaseManager();
-				
 		return m_instance;
 	}
 }

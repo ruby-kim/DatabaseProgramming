@@ -4,8 +4,6 @@ package kr.ar.sejong.dbp.team4.group;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Vertex;
