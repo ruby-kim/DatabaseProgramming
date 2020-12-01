@@ -35,13 +35,11 @@ public class DatabaseManager { //17011654 김경남
 		
 	// singleton
 	private static DatabaseManager m_instance;
-		
-		private DatabaseManager() {};
-		
-		public static DatabaseManager getInstance() {
-			if(m_instance == null) 
-				m_instance = new DatabaseManager();
+	private DatabaseManager() {};
+	public static DatabaseManager getInstance() {
+		if(m_instance == null) 
+			m_instance = new DatabaseManager();
 				
-			return m_instance;
-		}
+		return m_instance;
+	}
 }
