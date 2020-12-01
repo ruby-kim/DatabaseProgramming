@@ -17,22 +17,27 @@ import org.json.JSONObject;
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Graph;
 import kr.ar.sejong.dbp.team4.Vertex;
+import kr.ar.sejong.dbp.team4.DatabaseManager;
 
 public class Team4Graph implements Graph {
 
 	private Connection connection;
-	private Statement stmt;
+	private Statement m_stmt = null;
 	private ResultSet rs;
 
-	Team4Graph() throws SQLException { 
-		//16011176 박병훈
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306", "root", "0000");
-		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
-		stmt.executeUpdate("USE Team4Graph");
-		stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
-		stmt.executeUpdate(
-				"CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
+	private void setStatement(Statement stmt) {
+		// 17011654 김경남
+		m_stmt = stmt;
+	}
+	
+	Team4Graph() { 
+		// 16011176 박병훈
+		// 17011654 김경남
+		super();
+		if (m_stmt == null)
+		{
+			m_stmt = DatabaseManager.getInstance().getStatement();
+		}
 	}
 
 	@Override
@@ -56,7 +61,7 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		// 17011654 김경남
 		try {// 해당 버텍스가 있는지 찾고 없다면 null을 있다면 vertex로 반환합니다.
-			ResultSet rs1 = stmt.executeQuery("SELECT * FROM vertex where id = " + Integer.parseInt(id) + ";");
+			ResultSet rs1 = m_stmt.executeQuery("SELECT * FROM vertex where id = " + Integer.parseInt(id) + ";");
 
 			if (rs1.next() == false)
 				return null;
@@ -73,7 +78,7 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		// 17011654 김경남
 		try {// 데베를 사용하여 버텍스들을 가져온후 어레이리스트로 반환합니다.
-			ResultSet rs = stmt.executeQuery("SELECT id FROM vertex;");
+			ResultSet rs = m_stmt.executeQuery("SELECT id FROM vertex;");
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
 			while (rs.next()) {
 				Team4Vertex ver = new Team4Vertex(rs.getInt(1), this);
@@ -91,7 +96,7 @@ public class Team4Graph implements Graph {
 		//16011176 박병훈
 		//17011654 김경남
 		try {
-			ResultSet rset = stmt.executeQuery(
+			ResultSet rset = m_stmt.executeQuery(
 					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$." + key + "') = " + value + "");
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
 			while (rset.next()) {
@@ -133,7 +138,7 @@ public class Team4Graph implements Graph {
 		//16011189 양승주
 		//17011654 김경남
 		try{
-		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
+		ResultSet rs1 = m_stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
 		if (rs1.next() == false)
 			return null; // 일치하는 것이 없으면 null 반환
 		Edge edge = new Team4Edge(outVertex , inVertex , label , this);
@@ -149,7 +154,7 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		//17011654 김경남
 		try {// DB를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
-			ResultSet rs = stmt.executeQuery("SELECT * FROM edge;");
+			ResultSet rs = m_stmt.executeQuery("SELECT * FROM edge;");
 			ArrayList<Edge> arr = new ArrayList<Edge>();
 			while (rs.next()) {
 				Team4Vertex outvertex = new Team4Vertex(rs.getInt(1), this);
@@ -173,7 +178,7 @@ public class Team4Graph implements Graph {
 	public Iterable<Edge> getEdges(String key, Object value) {
 		//16011176 박병훈
 		try {
-			ResultSet rs = stmt.executeQuery(
+			ResultSet rs = m_stmt.executeQuery(
 					"SELECT source, destination, label FROM edge where " 
 							+ "JSON_VALUE(properties,'$." + key + "') = " + value + "");
 			ArrayList<Edge> arr = new ArrayList<Edge>();

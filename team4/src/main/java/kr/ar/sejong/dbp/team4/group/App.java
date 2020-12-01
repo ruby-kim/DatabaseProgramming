@@ -9,9 +9,13 @@ import java.util.Map;
 
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Vertex;
+import kr.ar.sejong.dbp.team4.DatabaseManager;
 
 public class App {
 	public static void main(String[] args) throws SQLException {
+		DatabaseManager dbMgr = DatabaseManager.getInstance();
+		dbMgr.initialize("3307", "0000");
+		
 		Team4Graph g = new Team4Graph();
 
 		Vertex v00 = g.addVertex("0");
