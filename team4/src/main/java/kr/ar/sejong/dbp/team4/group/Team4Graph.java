@@ -25,11 +25,11 @@ public class Team4Graph implements Graph {
 		// 17011654 김경남
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307", "root", "0000");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
+//		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
 		stmt.executeUpdate("USE Team4Graph");
-		stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
-		stmt.executeUpdate(
-				"CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
+//		stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
+//		stmt.executeUpdate(
+//				"CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
 	}
 
 	public void setStatement(Statement m_stmt) throws SQLException {
@@ -156,13 +156,13 @@ public class Team4Graph implements Graph {
 			while (rs.next()) {
 				Team4Vertex outvertex = new Team4Vertex(rs.getInt(1), this);
 				Team4Vertex invertex = new Team4Vertex(rs.getInt(2), this);
-				Team4Edge edge = new Team4Edge(outvertex, invertex, rs.getString(3), null);
-				JSONObject jval = new JSONObject(rs.getString(4)); // json object 이용
-				Iterator<String> keys = jval.keys();
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
-					edge.setProperty(key, jval.get(key));
-				}
+				Edge edge = new Team4Edge(outvertex, invertex, rs.getString(3), this);
+//				JSONObject jval = new JSONObject(rs.getString(4)); // json object 이용
+//				Iterator<String> keys = jval.keys();
+//				while (keys.hasNext()) {
+//					String key = (String) keys.next();
+//					edge.setProperty(key, jval.get(key));
+//				}
 				arr.add(edge);
 			}
 			return arr;
