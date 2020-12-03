@@ -31,7 +31,7 @@ public class Team4Edge implements Edge{
 
 	Team4Edge() throws SQLException{ // 생성자 , properties 넣을 때 필요
 		//16011140 안재현
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "0000"); // 본인에 맞춰서
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "0000"); // 본인에 맞춰서
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("USE Team4Graph");
 	}
@@ -43,7 +43,7 @@ public class Team4Edge implements Edge{
 		this.id = outVertex.getId() + "|" + label + "|" + inVertex.getId();
 		this.label = label;
 		this.graph = graph;
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "zpfldj"); // 본인에 맞춰서
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "0000"); // 본인에 맞춰서
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("USE Team4Graph");
 
@@ -57,7 +57,7 @@ public class Team4Edge implements Edge{
 		// 16011140 안재현
 		// 15011137 김지수
 		try{
-			ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Edge WHERE source = "+this.outVertex.getId()+" and destination = " + this.inVertex.getId() +" and label = " + this.label +";");
+			ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Edge WHERE source = "+this.outVertex.getId()+" and destination = " + this.inVertex.getId() +" and label = '" + this.label +"';");
 			set.next();
 			return set.getString(1);
 		}catch(SQLException e) {
@@ -73,7 +73,7 @@ public class Team4Edge implements Edge{
 		//16011140 안재현
 		//15011137 김지수
 		try{
-		ResultSet set = stmt.executeQuery("SELECT JSON_KEYS(properties) FROM Edge WHERE source = "+this.outVertex.getId()+" and destination = " + this.inVertex.getId() +" and label = " + this.label +";");
+		ResultSet set = stmt.executeQuery("SELECT JSON_KEYS(properties) FROM Edge WHERE source = "+this.outVertex.getId()+" and destination = " + this.inVertex.getId() +" and label = '" + this.label +"';");
 		set.next();
 		String propKeys = set.getString(1); // key 값
 		JSONArray arr= new JSONArray(propKeys);
@@ -106,7 +106,7 @@ public class Team4Edge implements Edge{
     		//value가 String 이다.
         	if(value instanceof String) {
         		try {
-        		stmt.executeUpdate("UPDATE edge SET properties = '{\"" + key +"\":\""+ value + "\"}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = " +this.label+";" );
+        		stmt.executeUpdate("UPDATE edge SET properties = '{\"" + key +"\":\""+ value + "\"}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = '" +this.label+"';" );
         		}
         		catch(Exception e){
         			return;
@@ -115,7 +115,7 @@ public class Team4Edge implements Edge{
         	// value가 숫자형.
         	else {
         		try {
-            		stmt.executeUpdate("UPDATE edge SET properties = '{\"" + key +"\":"+ value + "}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = " +this.label+";" );
+            		stmt.executeUpdate("UPDATE edge SET properties = '{\"" + key +"\":"+ value + "}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = '" +this.label+"';" );
             		}
             		catch(Exception e){
             			return;
@@ -125,7 +125,7 @@ public class Team4Edge implements Edge{
     	// 해당 vertex에 기존에 저장된 property가 있다
     	else {
     		try {
-    			ResultSet set = stmt.executeQuery("SELECT properties from edge WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = " +this.label+";");	
+    			ResultSet set = stmt.executeQuery("SELECT properties from edge WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = '" +this.label+"';");	
     			set.next();
     			property = set.getString(1);
     			property = property.substring(1,property.length()-1);	
@@ -135,7 +135,7 @@ public class Team4Edge implements Edge{
     		//value가 String 이다.
         	if(value instanceof String) {
         		try {
-        		stmt.executeUpdate("UPDATE edge SET properties = '{"+property+",\"" + key +"\":\""+ value + "\"}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = " +this.label+";" );
+        		stmt.executeUpdate("UPDATE edge SET properties = '{"+property+",\"" + key +"\":\""+ value + "\"}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = '" +this.label+"';" );
         		}
         		catch(Exception e){
         			return;
@@ -144,7 +144,7 @@ public class Team4Edge implements Edge{
         	// value가 숫자형.
         	else {
         		try {
-            		stmt.executeUpdate("UPDATE edge SET properties = '{"+property+",\"" + key +"\":"+ value + "}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = " +this.label+";" );
+            		stmt.executeUpdate("UPDATE edge SET properties = '{"+property+",\"" + key +"\":"+ value + "}' WHERE source ="+ this.outVertex.getId() +" AND destination = " + this.inVertex.getId()+" AND label = '" +this.label+"';" );
             		}
             		catch(Exception e){
             			return;

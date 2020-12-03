@@ -33,7 +33,7 @@ public class Team4Vertex implements Vertex {
 		this.id = id;
 		this.graph = graph;
 		
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306" , "root" , "0000");
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "0000");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("USE Team4Graph");
 	}

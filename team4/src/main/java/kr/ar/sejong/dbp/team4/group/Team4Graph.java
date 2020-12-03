@@ -22,11 +22,12 @@ public class Team4Graph implements Graph {
 
 	private Connection connection;
 	private Statement stmt;
+	private PreparedStatement pStmt = null;
 	private ResultSet rs;
 
 	Team4Graph() throws SQLException { 
 		//16011176 박병훈
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306", "root", "0000");
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307", "root", "0000");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
 		stmt.executeUpdate("USE Team4Graph");
@@ -189,5 +190,13 @@ public class Team4Graph implements Graph {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void setStatement(Statement statement) throws SQLException {
+		// TODO Auto-generated method stub
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307", "root", "0000");
+		stmt = connection.createStatement();
+		pStmt = connection.prepareStatement("");
+		pStmt.executeUpdate("USE Team4Graph;");
 	}
 }
