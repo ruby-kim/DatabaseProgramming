@@ -195,8 +195,11 @@ public class Team4Graph implements Graph {
 	public void setStatement(Statement statement) throws SQLException {
 		// TODO Auto-generated method stub
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307", "root", "0000");
-		stmt = connection.createStatement();
-		pStmt = connection.prepareStatement("");
-		pStmt.executeUpdate("USE Team4Graph;");
+		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
+		stmt.executeUpdate("USE Team4Graph");
+		stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
+		stmt.executeUpdate(
+				"CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
 	}
 }
