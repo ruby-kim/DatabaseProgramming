@@ -27,7 +27,7 @@ public class Team4Edge implements Edge{
 		stmt = graph.stmt;
 	}
 
-	Team4Edge(Vertex outVertex , Vertex inVertex , String label , Team4Graph graph) throws SQLException{
+	public Team4Edge(Vertex outVertex , Vertex inVertex , String label , Team4Graph graph) throws SQLException{
 		// 16011140 안재현
 		// 17011654 김경남
 		this.outVertex = outVertex;
