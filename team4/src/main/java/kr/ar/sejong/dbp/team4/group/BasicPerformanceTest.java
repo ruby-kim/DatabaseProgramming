@@ -11,12 +11,11 @@ import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Vertex;
 import kr.ar.sejong.dbp.team4.Graph;
 import kr.ar.sejong.dbp.team4.Direction;
-import kr.ar.sejong.dbp.team4.DatabaseManager;
 
 public class BasicPerformanceTest {
 	public static void createGraph(Graph g) throws IOException {
 	      BufferedReader br = new BufferedReader(new FileReader("D:\\dbp_data\\data.txt"));
-	      int i=0;
+	      int i = 0;
 	      while (true) {
 	         String line = br.readLine();
 	         System.out.println(i++);
@@ -103,14 +102,10 @@ public class BasicPerformanceTest {
 	   }
 
 	   public static void main(String[] args) throws IOException, SQLException {
-	      DatabaseManager dbMgr = DatabaseManager.getInstance();
-	      dbMgr.initialize("3307", "0000");    
-	      
 	      Graph g = new Team4Graph();
-	      ((Team4Graph)g).setStatement(dbMgr.getStatement());
 
 	      long p = System.currentTimeMillis();
-	      //createGraph(g);
+	      createGraph(g);
 	      System.out.println("Graph Creation (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();

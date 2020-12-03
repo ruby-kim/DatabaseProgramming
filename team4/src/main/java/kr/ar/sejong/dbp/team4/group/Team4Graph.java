@@ -7,10 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -20,13 +17,12 @@ import kr.ar.sejong.dbp.team4.Vertex;
 
 public class Team4Graph implements Graph {
 
-	private Connection connection;
-	private Statement stmt;
-	private PreparedStatement pStmt = null;
-	private ResultSet rs;
-
+	public Connection connection;
+	public Statement stmt;
+	
 	Team4Graph() throws SQLException { 
-		//16011176 박병훈
+		// 16011176 박병훈
+		// 17011654 김경남
 		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307", "root", "0000");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
@@ -36,10 +32,15 @@ public class Team4Graph implements Graph {
 				"CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
 	}
 
+	public void setStatement(Statement m_stmt) throws SQLException {
+		// 17011654 김경남
+		m_stmt = stmt;
+	}
+	
 	@Override
 	public Vertex addVertex(String id) {
-		//16011176 박병훈
-		//17011654 김경남
+		// 16011176 박병훈
+		// 17011654 김경남
 		try {
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO vertex (id) VALUES(?);");
 			pstmt.clearParameters();
@@ -88,9 +89,9 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Vertex> getVertices(String key, Object value) {
-		//16011189 양승주
-		//16011176 박병훈
-		//17011654 김경남
+		// 16011189 양승주
+		// 16011176 박병훈
+		// 17011654 김경남
 		try {
 			ResultSet rset = stmt.executeQuery(
 					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$." + key + "') = " + value + "");
@@ -109,9 +110,9 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
-		//16011189 양승주
-		//15011137 김지수
-		//17011654 김경남
+		// 16011189 양승주
+		// 15011137 김지수
+		// 17011654 김경남
 		try {
 			PreparedStatement pstmt = connection
 					.prepareStatement("INSERT INTO edge(source,destination,label) VALUES(?,?,?);");
@@ -131,10 +132,10 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		//16011189 양승주
-		//17011654 김경남
+		// 16011189 양승주
+		// 17011654 김경남
 		try{
-		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = "+label+ ";");
+		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = '"+label+ "';");
 		if (rs1.next() == false)
 			return null; // 일치하는 것이 없으면 null 반환
 		Edge edge = new Team4Edge(outVertex , inVertex , label , this);
@@ -148,7 +149,7 @@ public class Team4Graph implements Graph {
 	@Override
 	public Iterable<Edge> getEdges() {
 		// 16011176 박병훈
-		//17011654 김경남
+		// 17011654 김경남
 		try {// DB를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
 			ResultSet rs = stmt.executeQuery("SELECT * FROM edge;");
 			ArrayList<Edge> arr = new ArrayList<Edge>();
@@ -172,7 +173,7 @@ public class Team4Graph implements Graph {
 
 	@Override
 	public Iterable<Edge> getEdges(String key, Object value) {
-		//16011176 박병훈
+		// 16011176 박병훈
 		try {
 			ResultSet rs = stmt.executeQuery(
 					"SELECT source, destination, label FROM edge where " 
@@ -190,16 +191,5 @@ public class Team4Graph implements Graph {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public void setStatement(Statement statement) throws SQLException {
-		// TODO Auto-generated method stub
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307", "root", "0000");
-		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
-		stmt.executeUpdate("USE Team4Graph");
-		stmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
-		stmt.executeUpdate(
-				"CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");
 	}
 }

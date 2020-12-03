@@ -1,16 +1,11 @@
 package kr.ar.sejong.dbp.team4.group;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.json.JSONArray;
 
@@ -20,27 +15,23 @@ import kr.ar.sejong.dbp.team4.Vertex;
 
 public class Team4Vertex implements Vertex {
     
-	private Connection connection;
 	private Statement stmt;
-	private ResultSet rs;
 	private Team4Graph graph;
     //예: string 형태의 고유 아이디, '|' 사용 금지
     private int id;
     private String property = null;
 
     Team4Vertex(final int id,final Team4Graph graph) throws SQLException{
-        //15011137 김지수
+        // 15011137 김지수
+    	// 17011654 김경남
 		this.id = id;
 		this.graph = graph;
-		
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "0000");
-		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("USE Team4Graph");
+		stmt = graph.stmt;
 	}
     
     @Override
     public Iterable<Edge> getEdges(Direction direction, String... labels) {
-        //15011137 김지수
+        // 15011137 김지수
     	if(direction.equals(Direction.OUT)) {
     		return this.getOutEdges(labels);
     	} else if(direction.equals(Direction.IN)) {
@@ -50,7 +41,7 @@ public class Team4Vertex implements Vertex {
     }
     
     private Iterable<Edge> getInEdges(String... labels){
-        //15011137 김지수
+        // 15011137 김지수
     	List<Edge> totalEdges = new ArrayList<Edge>();	
     	String label;
     	try {
@@ -70,7 +61,7 @@ public class Team4Vertex implements Vertex {
     }
     
     private Iterable<Edge> getOutEdges(String... labels){
-        //15011137 김지수
+        // 15011137 김지수
     	List<Edge> totalEdges = new ArrayList<Edge>();
     	String label;
     	try {
@@ -91,7 +82,7 @@ public class Team4Vertex implements Vertex {
     
     @Override
     public Iterable<Vertex> getVertices(Direction direction, String... labels) {
-        //15011137 김지수
+        // 15011137 김지수
     	List<Vertex> totalVertices = new ArrayList<Vertex>();
     	
     	int newId;
@@ -125,13 +116,13 @@ public class Team4Vertex implements Vertex {
 
     @Override
     public Edge addEdge(String label, Vertex inVertex) {
-        //15011137 김지수
+        // 15011137 김지수
         return this.graph.addEdge(this, inVertex, label);
     }
 
     @Override
     public Object getProperty(String key) {
-        //15011137 김지수
+        // 15011137 김지수
     	try{
     		ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Vertex WHERE id = "+this.id+";");
     		set.next();
@@ -144,7 +135,7 @@ public class Team4Vertex implements Vertex {
 
     @Override
     public Set<String> getPropertyKeys() {
-        //15011137 김지수
+        // 15011137 김지수
     	try {
 			ResultSet set = stmt.executeQuery("SELECT JSON_KEYS(properties) FROM Vertex WHERE id = "+this.id+";");
 			set.next();
@@ -167,7 +158,7 @@ public class Team4Vertex implements Vertex {
 	// '{"key":"value"}'
     @Override
     public void setProperty(String key, Object value) {    	
-        //15011137 김지수
+        // 15011137 김지수
     	//property가 비어있으면 선언
     	if (property == null) {
     		property = new String();
@@ -224,14 +215,14 @@ public class Team4Vertex implements Vertex {
 
     @Override
     public Object getId() {
-        //15011137 김지수
+        // 15011137 김지수
         return id;
     }
     
     @Override
 	public String toString() {
-        //15011137 김지수
-    	//16011176 박병훈
+        // 15011137 김지수
+    	// 16011176 박병훈
 		return "v[" + id + "]";
 	}
 }

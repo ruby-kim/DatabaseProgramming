@@ -1,16 +1,10 @@
-
 package kr.ar.sejong.dbp.team4.group;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.json.JSONArray;
 
 import kr.ar.sejong.dbp.team4.Direction;
@@ -24,33 +18,25 @@ public class Team4Edge implements Edge{
 	private Vertex outVertex;
 	private Team4Graph graph;
 	public String id;
-	private Connection connection;
 	private Statement stmt;
-	private ResultSet rs;
     private String property = null;
 
 	Team4Edge() throws SQLException{ // 생성자 , properties 넣을 때 필요
-		//16011140 안재현
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "0000"); // 본인에 맞춰서
-		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("USE Team4Graph");
+		// 16011140 안재현
+		// 17011654 김경남
+		stmt = graph.stmt;
 	}
 
 	Team4Edge(Vertex outVertex , Vertex inVertex , String label , Team4Graph graph) throws SQLException{
-		//16011140 안재현
+		// 16011140 안재현
+		// 17011654 김경남
 		this.outVertex = outVertex;
 		this.inVertex = inVertex;
 		this.id = outVertex.getId() + "|" + label + "|" + inVertex.getId();
 		this.label = label;
 		this.graph = graph;
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3307" , "root" , "0000"); // 본인에 맞춰서
-		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
-		stmt.executeUpdate("USE Team4Graph");
-
-
+		stmt = graph.stmt;
 	}
-
-
 
 	@Override
 	public Object getProperty(String key) { // 이 Edge 에 properties 중 key 에 매칭되는 value 가져오기
@@ -65,8 +51,6 @@ public class Team4Edge implements Edge{
 		}
 		return null;
 	}
-
-
 
 	@Override
 	public Set<String> getPropertyKeys() { // 현재 edge 에 대한  properties 의 key 값들 리턴하는 함수 , outvertex,  invertex 의 id 와 label 이 맞는 edge 를 찾아 키값들 가져오기
@@ -89,8 +73,6 @@ public class Team4Edge implements Edge{
 	return null;
 
 	}
-
-
 
 	@Override
 	public void setProperty(String key, Object value) { // 프로퍼티 설정하기 , 또한 엣지테이블 select 후 그것에 맞는 edge 찾아서 넣기
@@ -154,15 +136,11 @@ public class Team4Edge implements Edge{
 
 	}
 
-
-
 	@Override
 	public Object getId() {
 		//16011140 안재현
 		return this.id;
 	}
-
-
 
 	@Override
 	public Vertex getVertex(Direction direction) throws IllegalArgumentException {
@@ -174,13 +152,12 @@ public class Team4Edge implements Edge{
 
 	}
 
-
-
 	@Override
 	public String getLabel() {
 		//16011140 안재현
 		return this.label;
 	}
+	
     @Override	
 	public String toString() {
     	//15011137 김지수

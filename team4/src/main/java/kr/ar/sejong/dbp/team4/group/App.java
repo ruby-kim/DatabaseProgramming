@@ -4,10 +4,7 @@ package kr.ar.sejong.dbp.team4.group;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Vertex;
 
 public class App {
@@ -32,8 +29,8 @@ public class App {
 		System.out.println(v00.getClass().getFields().length);
 //		while(v00.getId().)
 		Vertex v1 = g.addVertex("5");
-		Vertex v2 = g.addVertex("6");
-		Vertex v3 = g.addVertex("7");
+//		Vertex v2 = g.addVertex("6");
+//		Vertex v3 = g.addVertex("7");
 		
 		v1.setProperty("x", 300);
 		v1.setProperty("y", 200);
