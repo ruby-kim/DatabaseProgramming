@@ -6,15 +6,15 @@ import kr.ar.sejong.dbp.team4.Direction;
 import kr.ar.sejong.dbp.team4.Edge;
 import kr.ar.sejong.dbp.team4.Graph;
 import kr.ar.sejong.dbp.team4.Vertex;
-import kr.ar.sejong.dbp.team4.DatabaseManager;
 
 public class UnitTest {
 
-	public static void doTest(Graph g) throws SQLException {
+	public static void doTest(Graph g) {
 
 		// 그래프 생성
 		for (int i = 0; i < 13; i++) {
 			Vertex v = g.addVertex(String.valueOf(i));
+			System.out.println("i:"+i+"v:"+v);
 			v.setProperty("key1", String.valueOf(i));
 		}
 
@@ -58,21 +58,10 @@ public class UnitTest {
 	}
 
 	public static void main(String[] args) throws SQLException {
-		// DB 연결
-		DatabaseManager dbMgr = DatabaseManager.getInstance();
-		try {
-			dbMgr.initialize("3307", "0000");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
-				
 		// 이름 교체하세요
 		Graph g = new Team4Graph();
-		try {
-			doTest(g);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		doTest(g);
 	}
 
 }
+

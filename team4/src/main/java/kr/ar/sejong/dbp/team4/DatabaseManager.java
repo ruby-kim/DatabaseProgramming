@@ -23,8 +23,10 @@ public class DatabaseManager { //17011654 김경남
 		
 		//m_pStmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph;");
 		m_pStmt.executeUpdate("USE Team4Graph;");
-		//m_pStmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
-		//m_pStmt.executeUpdate("CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");	
+		m_pStmt.executeUpdate("CREATE OR REPLACE TABLE vertex (ID INTEGER UNIQUE PRIMARY KEY, properties JSON);");
+		m_pStmt.executeUpdate("CREATE OR REPLACE TABLE edge (source INTEGER, destination INTEGER, label VARCHAR(50), properties JSON);");	
+		m_pStmt.executeUpdate("CREATE OR REPLACE INDEX edge_IX ON edge (source) USING BTREE;");
+		m_pStmt.executeUpdate("CREATE OR REPLACE INDEX edge_IX2 ON edge (destination) USING BTREE;");	
 	}
 		
 	// close DB server
@@ -41,4 +43,5 @@ public class DatabaseManager { //17011654 김경남
 			m_instance = new DatabaseManager();
 		return m_instance;
 	}
+
 }
