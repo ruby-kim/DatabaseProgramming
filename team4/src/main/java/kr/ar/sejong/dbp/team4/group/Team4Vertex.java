@@ -43,9 +43,9 @@ public class Team4Vertex implements Vertex {
     	String sql=null; 
     	
     	if(direction.equals(Direction.OUT)) {
-    		sql = "SELECT * FROM edge WHERE destination = ? AND label = ?;";
-    	} else if(direction.equals(Direction.IN)) {
     		sql = "SELECT * FROM edge WHERE source = ? AND label = ?;";
+    	} else if(direction.equals(Direction.IN)) {
+    		sql = "SELECT * FROM edge WHERE destination = ? AND label = ?;";
     	}
         
 		try {
