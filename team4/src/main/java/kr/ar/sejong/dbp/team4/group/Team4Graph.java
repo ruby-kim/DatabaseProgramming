@@ -104,12 +104,8 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		// 17011654 김경남
 		try {
-			PreparedStatement pstmt = connection.prepareStatement(
-					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$.?') = ?");
-			pstmt.clearParameters();
-			pstmt.setString(1, key);
-			pstmt.setObject(2, value);
-			ResultSet rset = pstmt.executeQuery();
+			ResultSet rset = stmt.executeQuery(
+					"SELECT id FROM vertex where JSON_VALUE(properties,'$.\""+key+"\"') = " + value + "");
 			ResultSetMetaData rsmd = rset.getMetaData();
 			rset.setFetchSize(rsmd.getColumnCount());
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
@@ -205,13 +201,8 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		try {
 //			System.out.println("getEdges key:"+key+"val:"+value);
-			PreparedStatement pstmt = connection.prepareStatement(
-					"SELECT source, destination, label FROM edge where " 
-							+ "JSON_VALUE(properties,'$.?') = ?");
-			pstmt.clearParameters();
-			pstmt.setString(1, key);
-			pstmt.setObject(2, value);
-			ResultSet rs = pstmt.executeQuery();
+			ResultSet rs = stmt.executeQuery("SELECT source, destination, label FROM edge where " 
+					+ "JSON_VALUE(properties,'$.\""+ key +"\"') = " + value + "");
 			ResultSetMetaData rsmd = rs.getMetaData();
 			rs.setFetchSize(rsmd.getColumnCount());
 			ArrayList<Edge> arr = new ArrayList<Edge>();
