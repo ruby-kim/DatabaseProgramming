@@ -23,7 +23,7 @@ public class Team4Graph implements Graph {
 	Team4Graph() throws SQLException { 
 		// 16011176 박병훈
 		// 17011654 김경남
-		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306", "root", "");
+		connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306", "root", "0000");
 		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		stmt.executeUpdate("CREATE OR REPLACE DATABASE Team4Graph");
 		stmt.executeUpdate("USE Team4Graph");
