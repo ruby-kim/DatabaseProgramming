@@ -122,9 +122,14 @@ public class Team4Vertex implements Vertex {
     public Object getProperty(String key) {
         // 15011137 김지수
     	try{
-    		ResultSet set = stmt.executeQuery("SELECT JSON_VALUE(properties, '$."+key+"') FROM Vertex WHERE id = "+this.id+";");
-    		set.next();
-    		property = set.getString(1);
+    		PreparedStatement pstmt = conn.prepareStatement(
+					"SELECT JSON_VALUE(properties, '$.?') FROM Vertex WHERE id = ?;");
+			pstmt.clearParameters();
+			pstmt.setString(1, key);
+			pstmt.setString(2, key);
+			ResultSet rset = pstmt.executeQuery();
+    		rset.next();
+    		property = rset.getString(1);
     		return property;
     	} catch(Exception e){
     		return null;
@@ -135,7 +140,9 @@ public class Team4Vertex implements Vertex {
     public Set<String> getPropertyKeys() {
         // 15011137 김지수
     	try {
-			ResultSet set = stmt.executeQuery("SELECT JSON_KEYS(properties) FROM Vertex WHERE id = "+this.id+";");
+    		PreparedStatement pstmt = conn.prepareStatement(
+					"SELECT JSON_KEYS(properties) FROM Vertex WHERE id = "+this.id+";");
+			ResultSet set = pstmt.executeQuery();
 			set.next();
 			String propKeys = set.getString(1);
 			JSONArray arr = new JSONArray(propKeys);
