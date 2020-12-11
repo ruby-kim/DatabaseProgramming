@@ -25,7 +25,7 @@ public class BasicPerformanceTest {
 	            break;
 	         if (line.startsWith("#"))
 	            continue;
-	         if (i==10000)
+	         if (i==50000)
 	        	 break; 
 	         String[] arr = line.split("\t");
 	         Vertex vl = g.getVertex(arr[0]);

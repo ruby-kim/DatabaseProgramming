@@ -3,6 +3,7 @@ package kr.ar.sejong.dbp.team4.group;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -55,6 +56,8 @@ public class Team4Vertex implements Vertex {
 			pstmt.setInt(1, this.id);
 			pstmt.setString(2, label);
 			ResultSet set = pstmt.executeQuery();
+			ResultSetMetaData rsmd = set.getMetaData();
+			set.setFetchSize(rsmd.getColumnCount());
 			while(set.next()) {
 				Vertex sVertex = new Team4Vertex(set.getInt(1),graph);
 				Vertex dVertex = new Team4Vertex(set.getInt(2),graph);
@@ -81,11 +84,11 @@ public class Team4Vertex implements Vertex {
     	int op; 
     	
     	if(direction.equals(Direction.OUT)) {
-    		sql = "SELECT * FROM edge WHERE source = ? AND label = ?;";
+    		sql = "SELECT source, destination FROM edge WHERE source = ? AND label = ?;";
         	op = 2;
     	}	
     	else {
-    		sql = "SELECT * FROM edge WHERE destination = ? AND label = ?;";
+    		sql = "SELECT source, destination FROM edge WHERE destination = ? AND label = ?;";
     		op = 1;
     	} 
     	try {
@@ -95,7 +98,8 @@ public class Team4Vertex implements Vertex {
 			pstmt.setInt(1, this.id);
 			pstmt.setString(2, label);
 			ResultSet set = pstmt.executeQuery();
-    		
+			ResultSetMetaData rsmd = set.getMetaData();
+			set.setFetchSize(rsmd.getColumnCount());
 			while(set.next()) {
 				newId = set.getInt(op);
 				Vertex newVertex = new Team4Vertex(newId, graph);

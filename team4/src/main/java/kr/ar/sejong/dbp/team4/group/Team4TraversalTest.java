@@ -19,7 +19,7 @@ public class Team4TraversalTest {
 	public static void createGraph(Graph g) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("c:\\data.txt"));
 		int cnt = 0;
-		while (true) {
+		while (cnt < 50000) {
 			String line = br.readLine();
 			if (line == null)
 				break;
@@ -60,7 +60,6 @@ public class Team4TraversalTest {
 			Vertex v = iter.next();
 			HashSet<String> rv = new HashSet<String>();
 			// 두 번 이내의 Direction.OUT 으로 도달할 수 있는 vertices의 id를 구하기
-
 			Iterator<Vertex> vi = v.getVertices(Direction.OUT, "label").iterator();
 			while (vi.hasNext()) {
 				Vertex ov = vi.next();

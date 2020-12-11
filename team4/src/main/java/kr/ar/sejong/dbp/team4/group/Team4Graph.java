@@ -1,9 +1,11 @@
 package kr.ar.sejong.dbp.team4.group;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -63,11 +65,12 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		// 17011654 김경남
 		try {// 해당 버텍스가 있는지 찾고 없다면 null을 있다면 vertex로 반환합니다.
-			ResultSet rs1 = stmt.executeQuery("SELECT * FROM vertex where id = " +id + ";");
-
+			PreparedStatement pstmt = connection.prepareStatement("SELECT id FROM vertex where id = (?);");
+			pstmt.clearParameters();
+			pstmt.setInt(1, Integer.parseInt(id));
+			ResultSet rs1 = pstmt.executeQuery();
 			if (rs1.next() == false)
 				return null;
-
 			Team4Vertex ver = new Team4Vertex(Integer.parseInt(id), this); // 버텍스 만들기
 			return ver;
 		} catch (Exception ex) {
@@ -80,7 +83,10 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		// 17011654 김경남
 		try {// 데베를 사용하여 버텍스들을 가져온후 어레이리스트로 반환합니다.
-			ResultSet rs = stmt.executeQuery("SELECT id FROM vertex;");
+			PreparedStatement pstmt = connection.prepareStatement("SELECT id FROM vertex;");
+			ResultSet rs = pstmt.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			rs.setFetchSize(rsmd.getColumnCount());
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
 			while (rs.next()) {
 				Team4Vertex ver = new Team4Vertex(rs.getInt(1), this);
@@ -98,8 +104,14 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		// 17011654 김경남
 		try {
-			ResultSet rset = stmt.executeQuery(
-					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$." + key + "') = " + value + "");
+			PreparedStatement pstmt = connection.prepareStatement(
+					"SELECT id FROM vertex where " + "JSON_VALUE(properties,'$.?') = ?");
+			pstmt.clearParameters();
+			pstmt.setString(1, key);
+			pstmt.setObject(2, value);
+			ResultSet rset = pstmt.executeQuery();
+			ResultSetMetaData rsmd = rset.getMetaData();
+			rset.setFetchSize(rsmd.getColumnCount());
 			ArrayList<Vertex> arr = new ArrayList<Vertex>();
 			while (rset.next()) {
 				Team4Vertex ver = new Team4Vertex(rset.getInt(1), this);
@@ -140,11 +152,18 @@ public class Team4Graph implements Graph {
 		// 16011189 양승주
 		// 17011654 김경남
 		try{
-		ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = '"+label+ "';");
-		if (rs1.next() == false)
-			return null; // 일치하는 것이 없으면 null 반환
-		Edge edge = new Team4Edge(outVertex , inVertex , label , this);
-		return edge;
+			PreparedStatement pstmt = connection.prepareStatement(
+					"SELECT source,destination,label FROM edge WHERE source = ? AND destination = ? AND label = ?;");
+			pstmt.clearParameters();
+			pstmt.setObject(1, outVertex.getId()); // set properties
+			pstmt.setObject(2, inVertex.getId());
+			pstmt.setString(3, label);
+			pstmt.executeUpdate();
+			ResultSet rs1 = stmt.executeQuery("SELECT * FROM edge WHERE source = " + outVertex.getId() +" AND destination = " + inVertex.getId()+ " AND label = '"+label+ "';");
+			if (rs1.next() == false)
+				return null; // 일치하는 것이 없으면 null 반환
+			Edge edge = new Team4Edge(outVertex , inVertex , label , this);
+			return edge;
 		}catch (Exception ex) {
 			return null;
 		}
@@ -157,7 +176,11 @@ public class Team4Graph implements Graph {
 		// 17011654 김경남
 		// 수정
 		try {// DB를 사용하여 edge들을 가져온후 어레이리스트로 반환합니다.
-			ResultSet rs = stmt.executeQuery("SELECT source, destination, label FROM edge;");
+			PreparedStatement pstmt = connection.prepareStatement(
+					"SELECT source, destination, label FROM edge;");
+			ResultSet rs = pstmt.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			rs.setFetchSize(rsmd.getColumnCount());
 			ArrayList<Edge> arr = new ArrayList<Edge>();
 			while (rs.next()) {
 				Team4Vertex outvertex = new Team4Vertex(rs.getInt(1), this);
@@ -182,9 +205,15 @@ public class Team4Graph implements Graph {
 		// 16011176 박병훈
 		try {
 //			System.out.println("getEdges key:"+key+"val:"+value);
-			ResultSet rs = stmt.executeQuery(
+			PreparedStatement pstmt = connection.prepareStatement(
 					"SELECT source, destination, label FROM edge where " 
-							+ "JSON_VALUE(properties,'$." + key + "') = " + value + "");
+							+ "JSON_VALUE(properties,'$.?') = ?");
+			pstmt.clearParameters();
+			pstmt.setString(1, key);
+			pstmt.setObject(2, value);
+			ResultSet rs = pstmt.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			rs.setFetchSize(rsmd.getColumnCount());
 			ArrayList<Edge> arr = new ArrayList<Edge>();
 			while (rs.next()) {
 				Team4Vertex outvertex = new Team4Vertex(rs.getInt(1), this);
